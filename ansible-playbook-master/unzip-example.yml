@@ -1,0 +1,15 @@
+---
+- hosts: all
+  vars:
+    path_dest: D:\Example
+  gather_facts: no
+  tasks:
+  - name: 
+    win_get_url:
+      url: https://www.dropbox.com/sh/6kakxhm91e1acec/AACJYRuTIRJxIt8M2hXrKZ6Ta/DealerNet.gz?dl=1
+      dest: C:\Temp 
+  - name: unzip gz
+    win_unzip:
+      src: C:\Temp\DealerNet.gz
+      dest: D:\Example
+      recurse: yes

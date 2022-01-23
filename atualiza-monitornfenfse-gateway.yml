@@ -1,0 +1,42 @@
+---
+- hosts: all
+  vars:
+    PATH_UPLOAD: "C:\\Upload"
+    ZIP_FILE: "{{ PATH_UPLOAD }}\\MonitorNFeNFSe.Gateway.zip"
+    PATH_BASE: "D:\\Gateway_MonitorNFeNFSe"
+  gather_facts: no
+  tasks:
+  - name: Criando o diretório C:\Temp caso não exista.
+    win_file:
+      path: "{{ PATH_UPLOAD }}"
+      state: directory
+  - name: Baixando o pacote de dll
+    win_get_url:
+      url: "{{ URL }}"
+      dest: "{{ ZIP_FILE }}"
+      force: no
+  - name: Criando o diretório backup caso não exista.
+    win_file:
+      path: "{{ PATH_BASE }}\\Backup"
+      state: directory
+  - name: Backupeando DLL MonitorNFeNFSe.Library
+    win_copy:
+      src: D:\Gateway_MonitorNFeNFSe\MonitorNFeNFSe.Library.dll
+      dest: D:\Gateway_MonitorNFeNFSe\Backup
+      remote_src: yes
+  - name: Extraindo a dll no caminho {{ PATH_BASE }}
+    win_zip:
+      src: "{{ ZIP_FILE }}"
+      dest: "{{ PATH_BASE }}"
+      recurse: yes
+      delete_archive: yes
+  - name: Extraindo a dll no caminho {{ PATH_BASE }}\bin
+    win_zip:
+      src: "{{ ZIP_FILE }}"
+      dest: "{{ PATH_BASE }}\\bin"
+      recurse: yes
+      delete_archive: yes
+  - name: Deletando o pacote de dll
+    win_file:
+      path: "{{ ZIP_FILE }}"
+      state: absent

@@ -1,0 +1,19 @@
+---
+- hosts: all
+  vars:
+  gather_facts: no
+  tasks:
+  - name: Parando o Pool da aplicação
+    win_iis_webapppool:
+      name: "{{ item }}.dealernetworkflow.com.br"
+      state: stopped
+    loop: "{{ pool_names }}"
+
+  - name: Parando o serviço Monitor Workflow
+    win_service:
+      name: MonitorWorkflow
+      state: stopped
+    when: monitor_workflow is defined
+
+
+

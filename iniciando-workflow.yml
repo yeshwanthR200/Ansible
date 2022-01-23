@@ -1,0 +1,16 @@
+---
+- hosts: all
+  vars:
+  gather_facts: no
+  tasks:
+  - name: Iniciando o Pool da aplicação
+    win_iis_webapppool:
+      name: "{{ item }}.dealernetworkflow.com.br"
+      state: started
+    loop: "{{ pool_names }}"
+
+  - name: Iniciando o serviço Monitor Workflow
+    win_service:
+      name: MonitorWorkflow
+      state: started
+    when: monitor_workflow is defined

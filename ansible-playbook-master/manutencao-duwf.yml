@@ -1,0 +1,21 @@
+---
+- hosts: all
+  vars:
+  gather_facts: no
+  tasks:
+  - name: Limpando as pastas PacotesQualidade e PastaDestinoArquivosInstalacao
+    win_file:
+      path: "{{ item }}"
+      state: absent
+    loop:
+      - C:\DUWF\PacotesQualidade
+      - C:\DUWF\PastaDestinoArquivosInstalacao
+
+  - name: Criando as pastas PacotesQualidade e PastaDestinoArquivosInstalacao
+    win_file:
+      path: "{{ item }}"
+      state: directory
+    when: duwf is defined
+    loop:
+      - C:\DUWF\PacotesQualidade
+      - C:\DUWF\PastaDestinoArquivosInstalacao

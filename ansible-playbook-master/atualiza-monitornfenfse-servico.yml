@@ -1,0 +1,43 @@
+---
+- hosts: servico
+  vars:
+    zip_file: C:\Temp\MonitorNFeNFSe.Servico.zip
+  gather_facts: no
+  tasks:
+  - name: Criando o diretório C:\Temp caso não exista.
+    win_file:
+      path: C:\Temp
+      state: directory
+
+  - name: Upload MonitorNFeNFSe.Gateway.zip para C:\Temp
+    win_copy:
+      src: /upload/monitornfenfse/MonitorNFeNFSe.Servico.zip
+      dest: C:\Temp
+
+  - name: Criando o diretório backup caso não exista.
+    win_file:      
+      path: "C:\\Program Files (x86)\\DealerNet\\MonitorNFeNFSe\\Backup"
+      state: directory
+
+  - name: Backupeando DLL MonitorNFeNFSe.Library
+    win_copy:
+      src: "C:\\Program Files (x86)\\DealerNet\\MonitorNFeNFSe\\MonitorNFeNFSe.Library.dll"
+      dest: "C:\\Program Files (x86)\\DealerNet\\MonitorNFeNFSe\\Backup"
+      remote_src: yes
+
+  - name: Parando serviço MonitorNFeNFSe
+    win_service:
+      name: MonitorNFeNFSe
+      state: stopped
+
+  - name: Atualizando MonitorNFeNFSe - {{ nome_cliente }}
+    win_zip:
+      src: {{ zip_file }}
+      dest: "C:\\Program Files (x86)\\DealerNet\\MonitorNFeNFSe"
+      recurse: yes
+      delete_archive: yes
+
+  - name: Iniciando serviço MonitorNFeNFSe
+    win_service:
+      name: MonitorNFeNFSe
+      state: started

@@ -1,0 +1,22 @@
+---
+- hosts: duwf
+  gather_facts: no 
+  tasks:
+  - name: Criando o diretorio base para download
+    win_file: 
+      path: C:\DUWF\PacotesQualidade\{{ release }}
+      state: directory
+  - name: Baixando o(s) arquivo(s)
+    win_get_url:
+      url: "{{ item }}"
+      dest: C:\DUWF\PacotesQualidade\{{ release }}
+      force: no
+      timeout: 30
+    loop: "{{ urls }}"
+  - name: Copiando a release para os demais servidores
+    win_copy:
+      src: C:\DUWF\PacotesQualidade\{{ release }}
+      dest: \\{{ item }}\C$\DUWF\PacotesQualidade
+      remote_src: yes
+    loop: "{{ servers }}"
+    when: servers is defined
